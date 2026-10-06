@@ -22,8 +22,9 @@ inside the plugin installer: the pack installer downloads it onto your computer 
 sources. It touches nothing system-wide (no system Python, no PATH changes, no drivers).
 
 - Download: about 3.6 GB. On disk afterwards: about 5 GB.
-- Install time: about 20 minutes on a fast connection. Most of it is building GPU engines for your
-  card; on a 50 Mbit/s connection the download alone takes about 10 minutes more.
+- Install time: about 10 minutes on a fast connection with an RTX 4070 Ti (slower cards take longer).
+  Most of it is building GPU engines for your card; on a 50 Mbit/s connection the download alone takes
+  about 10 minutes more.
 - Nothing to configure.
 
 ### Requirements
@@ -51,7 +52,11 @@ sources. It touches nothing system-wide (no system Python, no PATH changes, no d
 - The row shows the progress, for example "Installing 34%: Installing PyTorch and TensorRT", with
   the downloaded amount during downloads. The steps: downloads, unpacking Python, installing PyTorch
   and TensorRT, unpacking the model weights, recording file hashes, then building GPU engines
-  (the Balanced Turbo engine first, which also serves as the pack's self-check, then the Extreme engines for 1920x1080). It ends with "Installed".
+  (the Balanced Turbo engine first, which also serves as the pack's self-check, then the five Extreme engines for
+  1920x1080, about 4 minutes, shown one by one with the elapsed time). It ends with "Installed".
+- Balanced Turbo is ready as soon as its engine is built, a few minutes into the install: the row then says
+  "Installed; building Extreme engines 3/5 (flow)..." and Balanced Turbo jobs run. Extreme waits for the install to
+  finish.
 - You can keep working, close the panel or close After Effects: the install runs on its own and
   keeps going. Reopen the panel to see where it is.
 - There is no Cancel button. If the PC restarts or the install is stopped, the row says "Install
@@ -61,9 +66,9 @@ sources. It touches nothing system-wide (no system Python, no PATH changes, no d
 
 Pick **Balanced Turbo (NVIDIA)** or **Extreme (NVIDIA)** under Interpolation Quality and run as
 usual. The first job at a resolution the pack has not seen yet builds GPU engines once; the job
-message then says "Building TensorRT engine for this resolution (one-time, several minutes)".
+message then says "Building TensorRT engine 3/5 (flow) for this resolution (one-time)..." with the elapsed time.
 
-- Extreme: 1080p is built during the install; every other size takes about 10 minutes once.
+- Extreme: 1080p is built during the install; every other size takes about 4 minutes once.
 - Balanced Turbo: 720p to 4K landscape is built during the install; portrait and other sizes take a
   few minutes once.
 - After some plugin updates the first job rebuilds its engines once, the same way.
@@ -76,7 +81,7 @@ clip give tiny, invisible differences in the in-between frames. Kept frames are 
 ### Update and remove
 
 - **Update**: when a plugin update ships a newer PyTorch or TensorRT, the row says "update
-  available" and shows **Update Extreme pack** (about 3.6 GB, 20 minutes). Turbo and Extreme keep
+  available" and shows **Update Extreme pack** (about 3.6 GB, 10 minutes). Turbo and Extreme keep
   working until you update.
 - **Remove**: **Remove Extreme pack** in the same row deletes the whole pack folder (about 5 GB,
   engines included). Turbo and Extreme are unavailable until you install it again.
@@ -108,6 +113,7 @@ report a problem. The codes in parentheses are what the log and job results show
 | "Install did not finish." / `interrupted` | The install stopped (restart, crash, sleep). Click Install again; it resumes. |
 | "Extreme pack install did not start" (`schtasks_failed`) | Windows Task Scheduler refused the install task. Restart Windows and try again; if it repeats, report it (see above). |
 | "Extreme pack is still installing..." | Wait for the row to say "Installed". |
+| "Extreme engines are still building (3/5). Use Balanced Turbo meanwhile." | The install is finishing; use Balanced Turbo or wait for the row to say "Installed". |
 | "Extreme pack is not installed. Install it from System Check." | Install it, or pick another preset. |
 | `remove_failed` | A pack file was in use. Close After Effects and anything else that may use it, then Remove again. |
 | `verify_failed`, `not_installed` (only from a manual pack check) | Pack files are missing or changed. Remove the pack and install it again. |
