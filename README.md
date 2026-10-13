@@ -73,8 +73,12 @@ message then says "Building TensorRT engine 3/5 (flow) for this resolution (one-
   few minutes once.
 - After some plugin updates the first job rebuilds its engines once, the same way.
 
-Limits: Extreme does not work at 4K (this includes 1080p clips upscaled 2x before interpolation); use
-Balanced Turbo or Quality there. On an 8 GB card, Extreme at 1440p may run out of video memory
+With upscaling on, Extreme interpolates at the clip's own size and upscales afterwards, so a 1080p
+clip upscaled 2x needs no new engines. The upscaler then runs on every in-between frame too, so
+the job takes longer than without upscaling. Balanced Turbo does the same when the upscaled size is
+above 4K or portrait.
+
+Limits: Extreme does not work on 4K clips; use Balanced Turbo or Quality there. On an 8 GB card, Extreme at 1440p may run out of video memory
 (see Requirements). Extreme output is not bit-for-bit repeatable: two runs of the same
 clip give tiny, invisible differences in the in-between frames. Kept frames are always identical.
 
