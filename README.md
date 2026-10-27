@@ -26,10 +26,10 @@ inside the plugin installer: the pack installer downloads it onto your computer 
 sources. It touches nothing system-wide (no system Python, no PATH changes, no drivers).
 
 - Download: about 3.6 GB. On disk afterwards: about 5 GB.
-- Install time: about 25 minutes on a fast connection with an RTX 4070 Ti (slower cards take longer;
-  about 12 minutes on a 6 GB card, which skips Extreme's and Depth Map High's engines). Most of it is
-  building GPU engines for your card; on a 50 Mbit/s connection the download alone takes about 10 minutes
-  more.
+- Install time: about 12 minutes on a fast connection with an RTX 4070 Ti (slower cards take longer;
+  about 7 minutes on a 6 GB card, which skips Extreme's engines). About half of it is building GPU engines
+  for your card; Depth Map and Upscale Turbo prepare theirs later, during their first job. On a 50 Mbit/s
+  connection the download alone takes about 10 minutes more.
 - Nothing to configure.
 
 ### Requirements
@@ -58,12 +58,14 @@ sources. It touches nothing system-wide (no system Python, no PATH changes, no d
 - The row shows the progress, for example "Installing 34%: Installing PyTorch and TensorRT", with
   the downloaded amount during downloads. The steps: downloads, unpacking Python, installing PyTorch
   and TensorRT, unpacking the model weights, recording file hashes, then building GPU engines
-  (the Balanced Turbo engine first, which also serves as the pack's self-check, then the Depth Map engines,
-  about 5 minutes for Standard and 8 for High, then the five Extreme engines for 1920x1080, about 4 minutes,
-  shown one by one with the elapsed time). It ends with "Installed".
+  (the Balanced Turbo engine first, which also serves as the pack's self-check, then the five Extreme
+  engines for 1920x1080, about 5 minutes, shown one by one with the elapsed time). It ends with "Installed".
 - Balanced Turbo is ready as soon as its engine is built, a few minutes into the install: the row then says
   "Installed; building Extreme engines 3/5 (flow)..." and Balanced Turbo jobs run. Depth Map and Extreme wait for
   the install to finish.
+- Once installed, a **Pack features** line under the row lists what is ready and what prepares itself on
+  first use, for example "Ready: Balanced Turbo, Extreme · Prepares on first use: Upscale Turbo, Depth Map,
+  Depth Map High detail".
 - You can keep working, close the panel or close After Effects: the install runs on its own and
   keeps going. Reopen the panel to see where it is.
 - There is no Cancel button. If the PC restarts or the install is stopped, the row says "Install
@@ -80,9 +82,13 @@ message then says "Building TensorRT engine 3/5 (flow) for this resolution (one-
   few minutes once.
 - After some plugin updates the first job rebuilds its engines once, the same way.
 
-**Depth Map** (Timeline Actions, **Depth Map on Selected Layer**) needs no engine builds after the
-install: its engines cover every clip size and orientation. **Depth Map detail**: Standard (any 6 GB
-card) or High (8 GB; crisper edges and small near objects, a little slower). The depth layer comes with
+**Depth Map** (Timeline Actions, **Depth Map on Selected Layer**) prepares itself for your graphics card
+the first time you use each detail level: a popup says so first (**Continue** or **Cancel**), then that
+first job takes about 5 minutes longer for Standard and about 9 for High (RTX 4070 Ti; slower cards take
+longer), with the job message "Building Depth Map engine for this detail level (one-time)..." and the
+elapsed time. Cancelling it leaves nothing half-built: the next Depth Map job asks again. After that, every
+clip size and orientation runs right away. **Depth Map detail**: Standard (any 6 GB card) or High (8 GB;
+crisper edges and small near objects, a little slower). The depth layer comes with
 **Shift Edges** (Minimax) and **Feather** (Fast Box Blur) at 0: adjust them in Effect Controls.
 
 With upscaling on, Extreme interpolates at the clip's own size and upscales afterwards, so a 1080p
@@ -125,9 +131,9 @@ seconds, and with Extreme x4 from 51 to 24 seconds. The result looks the same as
 ### Update and remove
 
 - **Update**: when a plugin update ships a newer PyTorch or TensorRT, the row says "update
-  available" and shows **Update Extreme pack** (about 3.6 GB, then the engines rebuild: about 25 minutes). A pack
-  installed before Depth Map shows **Update Extreme pack (adds Depth Map)** instead (about 180 MB, then 5 to
-  13 minutes of engine building). A pack installed before Upscale Turbo shows **Update Extreme pack (adds
+  available" and shows **Update Extreme pack** (about 3.6 GB, then the engines rebuild: about 12 minutes). A pack
+  installed before Depth Map shows **Update Extreme pack (adds Depth Map)** instead (about 180 MB, a few
+  minutes; Depth Map then prepares itself during its first job, see Use it). A pack installed before Upscale Turbo shows **Update Extreme pack (adds
   Upscale Turbo, about 38 MB)** (nothing is built then; see Upscale Turbo), or both together (about 220 MB).
   Turbo and Extreme keep working until you update.
 - **Remove**: **Remove Extreme pack** in the same row deletes the whole pack folder (about 5 GB,
@@ -148,7 +154,7 @@ report a problem. The codes in parentheses are what the log and job results show
 | "NVIDIA driver X is too old; needs 580 or newer." (`driver_too_old`) | Update the NVIDIA driver, restart After Effects, then install. |
 | "Extreme (NVIDIA) needs an NVIDIA GPU with 8 GB VRAM (found N GB)..." | Extreme needs 8 GB. Use Balanced Turbo (NVIDIA), which works on 6 GB. |
 | "The Extreme pack needs an NVIDIA GPU with 6 GB VRAM (found N GB)" | Cards under 6 GB are not supported. Use Balanced or Quality. |
-| "Depth Map needs the latest Extreme pack..." | Click "Update Extreme pack (adds Depth Map)" in System Check: about 180 MB, then 5 to 13 minutes of engine building. |
+| "Depth Map needs the latest Extreme pack..." | Click "Update Extreme pack (adds Depth Map)" in System Check: about 180 MB, a few minutes. |
 | "N GB free, M GB needed" (`disk_space`) | Free space on the user-profile drive, then click Install again. |
 | "Install the Microsoft Visual C++ 2015-2022 Redistributable (x64) first..." (`vcredist_missing`) | Install it from Microsoft, then click Install again. |
 | `download_failed` | A download server did not answer. Check the connection (and any proxy or firewall rule for the hosts below), then click Install again; it resumes. |
@@ -163,7 +169,7 @@ report a problem. The codes in parentheses are what the log and job results show
 | "Extreme pack install did not start" (`schtasks_failed`) | Windows Task Scheduler refused the install task. Restart Windows and try again; if it repeats, report it (see above). |
 | "Extreme pack is still installing..." | Wait for the row to say "Installed". |
 | "Extreme engines are still building (3/5). Use Balanced Turbo meanwhile." | The install is finishing; use Balanced Turbo or wait for the row to say "Installed". |
-| "Extreme pack engines are still building... Depth Map is ready when System Check says Installed." | The same: Depth Map waits for its engines. |
+| "Extreme pack engines are still building... Depth Map is ready when System Check says Installed." | The same: Depth Map waits until the install has finished. |
 | "Depth Map High detail needs an NVIDIA GPU with 8 GB VRAM..." | Use Depth Map detail: Standard. |
 | No **Upscale Turbo (NVIDIA)** checkbox in the Upscale section | It needs the Extreme pack on an 8 GB NVIDIA card. If System Check offers "Update Extreme pack (adds Upscale Turbo...)", click it. |
 | The Upscale Turbo checkbox is greyed out ("Turbo covers Real-CUGAN Standard and Quality at 2x.") | Your upscale settings use the standard upscaler. Pick Real-CUGAN, Standard or Quality, 2x. |
