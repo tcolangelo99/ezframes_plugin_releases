@@ -12,19 +12,21 @@ Quality presets in the EzFrames panel:
 - **Extreme (NVIDIA)**: the best-looking interpolation EzFrames offers (about 10 output frames
   per second at 1080p on an RTX 4070 Ti).
 
-It also runs **Depth Map** (Timeline Actions): a steady grayscale depth pass of any layer.
+It also runs **Depth Map** (Timeline Actions): a steady grayscale depth pass of any layer, and
+**Upscale Turbo (NVIDIA)**: Real-CUGAN 2x upscaling about twice as fast (8 GB cards).
 
 Every other preset works without it.
 
 ### What it is
 
 A private runtime that lives in its own folder, `%LOCALAPPDATA%\EzFramesPlugin\trt`: Python,
-PyTorch, NVIDIA TensorRT, the Extreme, RIFE 4.25 and Depth Map model code and their trained weights. None of it is
+PyTorch, NVIDIA TensorRT, the Extreme, RIFE 4.25 and Depth Map model code and their trained weights, and
+Upscale Turbo's Real-CUGAN model files (8 GB cards). None of it is
 inside the plugin installer: the pack installer downloads it onto your computer from the official
 sources. It touches nothing system-wide (no system Python, no PATH changes, no drivers).
 
 - Download: about 3.6 GB. On disk afterwards: about 5 GB.
-- Install time: about 23 minutes on a fast connection with an RTX 4070 Ti (slower cards take longer;
+- Install time: about 25 minutes on a fast connection with an RTX 4070 Ti (slower cards take longer;
   about 12 minutes on a 6 GB card, which skips Extreme's and Depth Map High's engines). Most of it is
   building GPU engines for your card; on a 50 Mbit/s connection the download alone takes about 10 minutes
   more.
@@ -92,11 +94,42 @@ Limits: Extreme does not work on 4K clips; use Balanced Turbo or Quality there. 
 (see Requirements). Extreme output is not bit-for-bit repeatable: two runs of the same
 clip give tiny, invisible differences in the in-between frames. Kept frames are always identical.
 
+### Upscale Turbo
+
+**Upscale Turbo (NVIDIA)** runs the Real-CUGAN upscaler on your NVIDIA card's TensorRT, so upscaling
+takes about half the time. On an RTX 4070 Ti a 2-second 1080p clip upscaled to 4K went from 22 to 12
+seconds, and with Extreme x4 from 51 to 24 seconds. The result looks the same as the standard upscaler
+(the pixels differ very slightly, too little to see).
+
+- **Who gets it**: NVIDIA cards with **8 GB of video memory** or more that have the Extreme pack. The
+  checkbox appears in the Upscale section only on those cards. 6 GB cards keep the standard upscaler.
+- **What it covers**: Real-CUGAN **Standard** and **Quality** at **2x**, on clips up to 1920x1088
+  (1080p) in landscape. Every other setting uses the standard upscaler as before.
+- **On by default.** To turn it off, untick **Upscale Turbo (NVIDIA)** in the Upscale section; your
+  choice is remembered.
+- **One-time preparation**: the first time, a popup explains that Upscale Turbo has to prepare
+  itself for your graphics card. Choose **Use Upscale Turbo** or **Keep standard upscaler**. Preparing
+  happens once, during your next upscaling job, and adds about 4 to 5 minutes to it; the job message
+  then says "Building Upscale Turbo engine for this setting (one-time)..." with the elapsed time. A
+  different denoise level or Quality instead of Standard later prepares in a few seconds. After a
+  new graphics card or an Extreme pack update it prepares once more, the same way.
+- **When it falls back**: Upscale Turbo switches to the standard upscaler on its own, and the job
+  still finishes, for clips larger than 1920x1088, portrait clips, 3x and 4x, Real-ESRGAN, the Light
+  model, or any problem before its first frame. The job's completion line tells you which upscaler
+  ran: "Completed (Upscale: Turbo)", "Completed (Upscale: Standard)", or "Upscale Turbo unavailable
+  for this clip, used the standard upscaler".
+- **Space and memory**: its model files add about 38 MB to the pack, and each prepared setting about
+  4 MB. While it runs it uses about 4.3 GB of video memory; it never runs at the same time as Extreme or
+  Balanced Turbo, so an 8 GB card has room for both steps of a job.
+
 ### Update and remove
 
 - **Update**: when a plugin update ships a newer PyTorch or TensorRT, the row says "update
-  available" and shows **Update Extreme pack** (about 3.6 GB, 10 minutes). Turbo and Extreme keep
-  working until you update.
+  available" and shows **Update Extreme pack** (about 3.6 GB, then the engines rebuild: about 25 minutes). A pack
+  installed before Depth Map shows **Update Extreme pack (adds Depth Map)** instead (about 180 MB, then 5 to
+  13 minutes of engine building). A pack installed before Upscale Turbo shows **Update Extreme pack (adds
+  Upscale Turbo, about 38 MB)** (nothing is built then; see Upscale Turbo), or both together (about 220 MB).
+  Turbo and Extreme keep working until you update.
 - **Remove**: **Remove Extreme pack** in the same row deletes the whole pack folder (about 5 GB,
   engines included). Turbo and Extreme are unavailable until you install it again.
 - **Uninstalling EzFrames** (Windows Settings > Apps) removes the pack too, unless it is installing
@@ -132,6 +165,9 @@ report a problem. The codes in parentheses are what the log and job results show
 | "Extreme engines are still building (3/5). Use Balanced Turbo meanwhile." | The install is finishing; use Balanced Turbo or wait for the row to say "Installed". |
 | "Extreme pack engines are still building... Depth Map is ready when System Check says Installed." | The same: Depth Map waits for its engines. |
 | "Depth Map High detail needs an NVIDIA GPU with 8 GB VRAM..." | Use Depth Map detail: Standard. |
+| No **Upscale Turbo (NVIDIA)** checkbox in the Upscale section | It needs the Extreme pack on an 8 GB NVIDIA card. If System Check offers "Update Extreme pack (adds Upscale Turbo...)", click it. |
+| The Upscale Turbo checkbox is greyed out ("Turbo covers Real-CUGAN Standard and Quality at 2x.") | Your upscale settings use the standard upscaler. Pick Real-CUGAN, Standard or Quality, 2x. |
+| "Upscale Turbo unavailable for this clip, used the standard upscaler" | Nothing to do: the clip was outside what Turbo covers (above 1080p, or portrait) or Turbo hit a problem, so the standard upscaler did the job. If it happens on every 1080p clip, untick Upscale Turbo and report it (see above). |
 | "Extreme pack is not installed. Install it from System Check." | Install it, or pick another preset. |
 | `remove_failed` | A pack file was in use. Close After Effects and anything else that may use it, then Remove again. |
 | `verify_failed`, `not_installed` (only from a manual pack check) | Pack files are missing or changed. Remove the pack and install it again. |
@@ -148,10 +184,11 @@ never uploads your footage: frames stay on your PC.
 | `download.pytorch.org`, `download-r2.pytorch.org` | PyTorch and Torch-TensorRT |
 | `pypi.nvidia.com` | NVIDIA TensorRT |
 | `files.pythonhosted.org` (PyPI) | Small Python libraries (numpy, Pillow and others) |
-| `github.com` (EzFrames releases page, `trt-assets-v2`) | The model code and weights, unmodified |
+| `github.com` (EzFrames releases page, `trt-assets-v2` and `trt-assets-v3`) | The model code and weights, unmodified (v3: Upscale Turbo's model files) |
 
 Only if a model file cannot be fetched from the EzFrames releases page, the installer falls back to
-the original sources: `github.com` (TNTwise's model release), `raw.githubusercontent.com` (the
+the original sources: `github.com` (TNTwise's model release, and AmusementClub's vs-mlrt release for
+Upscale Turbo's model files), `raw.githubusercontent.com` (the
 authors' code at fixed versions), `huggingface.co` (the depth model's authors) and
 `drive.usercontent.google.com` (the authors' Google Drive copies). GitHub delivers release files through its own download servers.
 
@@ -161,4 +198,5 @@ Python (PSF license), PyTorch (BSD), NVIDIA TensorRT and CUDA (NVIDIA license te
 you install), and the model code and weights (MIT and Apache-2.0), which are
 listed with their sources and full license texts in
 [THIRD_PARTY_NOTICES.txt](https://github.com/tcolangelo99/ezframes_plugin_releases/releases/download/trt-assets-v2/THIRD_PARTY_NOTICES.txt)
-on the [`trt-assets-v2` release](https://github.com/tcolangelo99/ezframes_plugin_releases/releases/tag/trt-assets-v2).
+on the [`trt-assets-v2` release](https://github.com/tcolangelo99/ezframes_plugin_releases/releases/tag/trt-assets-v2)
+(Upscale Turbo's model files: the [`trt-assets-v3` release](https://github.com/tcolangelo99/ezframes_plugin_releases/releases/tag/trt-assets-v3)).
