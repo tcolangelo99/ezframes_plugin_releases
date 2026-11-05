@@ -9,11 +9,11 @@ Quality presets in the EzFrames panel:
 
 - **Balanced Turbo (NVIDIA)**: the Balanced model on NVIDIA TensorRT, about 3x faster than Balanced
   on an RTX 4070 Ti.
-- **Extreme (NVIDIA)**: the best-looking interpolation EzFrames offers (about 10 output frames
+- **Extreme (NVIDIA)**: the best-looking interpolation EzFrames offers (about 20 output frames
   per second at 1080p on an RTX 4070 Ti).
 
 It also runs **Depth Map** (Timeline Actions): a steady grayscale depth pass of any layer, and
-**Upscale Turbo (NVIDIA)**: Real-CUGAN 2x upscaling about twice as fast (8 GB cards).
+**Upscale Turbo (NVIDIA)**: Real-CUGAN 1.5x and 2x upscaling about twice as fast (8 GB cards).
 
 Every other preset works without it.
 
@@ -109,7 +109,7 @@ seconds, and with Extreme x4 from 51 to 24 seconds. The result looks the same as
 
 - **Who gets it**: NVIDIA cards with **8 GB of video memory** or more that have the Extreme pack. The
   checkbox appears in the Upscale section only on those cards. 6 GB cards keep the standard upscaler.
-- **What it covers**: Real-CUGAN **Standard** and **Quality** at **2x**, on clips up to 1920x1088
+- **What it covers**: Real-CUGAN **Standard** and **Quality** at **1.5x** and **2x**, on clips up to 1920x1088
   (1080p) in landscape. Every other setting uses the standard upscaler as before.
 - **On by default.** To turn it off, untick **Upscale Turbo (NVIDIA)** in the Upscale section; your
   choice is remembered.
@@ -172,7 +172,7 @@ report a problem. The codes in parentheses are what the log and job results show
 | "Extreme pack engines are still building... Depth Map is ready when System Check says Installed." | The same: Depth Map waits until the install has finished. |
 | "Depth Map High detail needs an NVIDIA GPU with 8 GB VRAM..." | Use Depth Map detail: Standard. |
 | No **Upscale Turbo (NVIDIA)** checkbox in the Upscale section | It needs the Extreme pack on an 8 GB NVIDIA card. If System Check offers "Update Extreme pack (adds Upscale Turbo...)", click it. |
-| The Upscale Turbo checkbox is greyed out ("Turbo covers Real-CUGAN Standard and Quality at 2x.") | Your upscale settings use the standard upscaler. Pick Real-CUGAN, Standard or Quality, 2x. |
+| The Upscale Turbo checkbox is greyed out ("Turbo covers Real-CUGAN Standard and Quality at 1.5x and 2x.") | Your upscale settings use the standard upscaler. Pick Real-CUGAN, Standard or Quality, 1.5x or 2x. |
 | "Upscale Turbo unavailable for this clip, used the standard upscaler" | Nothing to do: the clip was outside what Turbo covers (above 1080p, or portrait) or Turbo hit a problem, so the standard upscaler did the job. If it happens on every 1080p clip, untick Upscale Turbo and report it (see above). |
 | "Extreme pack is not installed. Install it from System Check." | Install it, or pick another preset. |
 | `remove_failed` | A pack file was in use. Close After Effects and anything else that may use it, then Remove again. |
