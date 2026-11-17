@@ -10,7 +10,9 @@ Quality presets in the EzFrames panel:
 - **Balanced Turbo (NVIDIA)**: the Balanced model on NVIDIA TensorRT, about 3x faster than Balanced
   on an RTX 4070 Ti.
 - **Extreme (NVIDIA)**: the best-looking interpolation EzFrames offers (about 20 output frames
-  per second at 1080p on an RTX 4070 Ti).
+  per second at 1080p on an RTX 4070 Ti). It is better on fast motion and big movements (fights,
+  fast camera moves): less ghosting. On slow motion it looks almost the same as Balanced Turbo,
+  which is about 4x faster. When you pick it, a yellow triangle next to Quality says the same.
 
 It also runs **Depth Map** (Timeline Actions): a steady grayscale depth pass of any layer, and
 **Upscale Turbo (NVIDIA)**: Real-CUGAN upscaling up to 2x about twice as fast (8 GB cards).
