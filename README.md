@@ -31,10 +31,11 @@ sources. It touches nothing system-wide (no system Python, no PATH changes, no d
   TensorRT), plus each part you tick: Smoother motion (Balanced Turbo and Extreme) 100 MB, Upscale Turbo
   38 MB, Depth Map 120 MB, Normal Map 420 MB, Normal Map High quality 4.5 GB. On disk afterwards: about
   5.5 GB without Normal Map High quality.
-- Install time: about 12 minutes on a fast connection with an RTX 4070 Ti with Smoother motion ticked (slower
-  cards take longer; about 7 minutes on a 6 GB card, which has no Extreme). About half of it is preparing
-  Balanced Turbo and Extreme for your card; Depth Map and Upscale Turbo prepare themselves later, during their
-  first job. On a 50 Mbit/s connection the base download alone takes about 10 minutes more.
+- Install time (RTX 4070 Ti, fast connection, every part ticked, measured for 0.1.122): the first features work after
+  about 7 minutes and Extreme after about 12; Depth Map and Upscale Turbo then prepare themselves in the background
+  while you already work (about 6 more minutes). With fewer parts it is shorter; slower cards take longer, and a 6 GB
+  card has no Extreme. Most of the time is preparing Balanced Turbo and Extreme for your card. On a 50 Mbit/s
+  connection the download alone takes about 10 minutes more.
 - Nothing to configure.
 
 ### Requirements
@@ -83,6 +84,9 @@ features wait while it downloads.
 - Balanced Turbo is ready as soon as its engine is built, a few minutes into the install: the row then says
   "Installed; building Extreme engines 3/5 (flow)..." and Balanced Turbo jobs run. Depth Map and Extreme wait for
   the install to finish.
+- If you ticked Upscale Turbo or Depth Map, the row then says "Installed. Preparing Upscale Turbo and Depth Map in
+  the background." for a few minutes: everything already works, and a job that needs one of them just waits until
+  it is ready.
 - Once installed, a **Pack features** line under the row lists the installed parts that are ready and those that
   prepare themselves on first use, for example "Ready: Balanced Turbo, Extreme · Prepares on first use: Upscale
   Turbo, Depth Map, Depth Map High detail".
@@ -103,8 +107,9 @@ message then says "Building TensorRT engine 3/5 (flow) for this resolution (one-
 - After some plugin updates the first job rebuilds its engines once, the same way.
 
 **Depth Map** (Timeline Actions, **Depth Map on Selected Layer**) prepares itself for your graphics card
-the first time you use each detail level: a popup says so first (**Continue** or **Cancel**), then that
-first job takes about 5 minutes longer for Standard and about 9 for High (RTX 4070 Ti; slower cards take
+once per detail level; Standard is already prepared right after the install. The first time you use a detail level
+that is not prepared yet, a popup says so first (**Continue** or **Cancel**), then that
+first job takes about 1 to 2 minutes longer (since 0.1.122; it was 5 to 9 before; RTX 4070 Ti, slower cards take
 longer), with the job message "Building Depth Map engine for this detail level (one-time)..." and the
 elapsed time. Cancelling it leaves nothing half-built: the next Depth Map job asks again. After that, every
 clip size and orientation runs right away. **Depth Map detail**: Standard (any 6 GB card) or High (8 GB;
@@ -135,7 +140,8 @@ seconds, and with Extreme x4 from 51 to 24 seconds. The result looks the same as
   other setting uses the standard upscaler as before.
 - **On by default.** To turn it off, untick **Upscale Turbo (NVIDIA)** in the Upscale section; your
   choice is remembered.
-- **One-time preparation**: the first time, a popup explains that Upscale Turbo has to prepare
+- **One-time preparation**: the install prepares the default setting (Standard, 2x, denoise 1) right after it
+  finishes, so that one starts at once. If none is prepared yet, a popup explains that Upscale Turbo has to prepare
   itself for your graphics card. Choose **Use Upscale Turbo** or **Keep standard upscaler**. Preparing
   happens once, during your next upscaling job, and adds about 4 to 5 minutes to it; the job message
   then says "Building Upscale Turbo engine for this setting (one-time)..." with the elapsed time. A
@@ -177,7 +183,7 @@ characters as if they were 3D.
 ### Update and remove
 
 - **Update**: when a plugin update ships a newer PyTorch or TensorRT, the row says "update
-  available" and shows **Update Extreme pack** (about 4 GB, then the engines rebuild: about 12 minutes). It
+  available" and shows **Update Extreme pack** (about 4 GB, then the engines rebuild: about 10 minutes). It
   updates exactly the parts you have; your installed parts keep working until you update. New parts are never
   an update: add them when you want them (see Install). When a plugin update needs the newer PyTorch or TensorRT,
   the row says "update required" and the Extreme pack features wait until you update; picking one of them offers
